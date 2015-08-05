@@ -1,0 +1,28 @@
+/*
+ * CSS HELPER CLASSES
+ * used in conjunction with bootstrap 3
+ */
+
+/* position */
+.absolute{position:absolute}
+.fixed{position:fixed}
+.relative{position:relative}
+.static{position:static}
+
+/* display */
+.inline{display:inline}
+.inline-block{display:inline-block}
+.block{display:block}
+.table{display:table}
+.table-cell{display:table-cell}
+.flex{display:flex}
+.inline-flex{display:inline-flex}
+
+/* vertical alignment */
+.align-top{vertical-align:top}
+.align-middle{vertical-align:middle}
+.align-bottom{vertical-align:bottom}
+.v-align{position:relative;top:50%;-webkit-transform:translateY(-50%);-ms-transform:translateY(-50%);transform:translateY(-50%)}
+
+/* images */
+.img-full{width:100%;height:auto}
