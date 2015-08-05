@@ -38,7 +38,7 @@ class SMStext {
 		switch($carrier) {
 			case 'AT&T':
 			case 'ATT':
-				$domain =  'mobile.att.net';
+				$domain =  'txt.att.net';
 				break;
 			case 'Sprint':
 				$domain = 'messaging.sprintpcs.com';
