@@ -26,3 +26,6 @@
 
 /* images */
 .img-full{width:100%;height:auto}
+
+/* container */
+.container-wide{max-width:1500px}
