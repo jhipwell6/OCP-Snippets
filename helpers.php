@@ -17,6 +17,52 @@ function link_target($url) {
 }
 
 /*
+ * trim_excerpt()
+ * return ''
+ */
+function trim_excerpt($text) {
+	return rtrim($text,'[&hellip;]');
+}
+add_filter('get_the_excerpt', 'trim_excerpt');
+
+/*
+ * the_post_thumbnail_url()
+ * echo url
+ */
+function the_post_thumbnail_url() {
+	global $post;
+	$image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
+	$url = $image[0];
+	
+	echo $url;
+}
+
+/*
+ * time_ago()
+ * return time
+ */
+function time_ago($time) {
+	$periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
+	$lengths = array("60","60","24","7","4.35","12","10");
+
+	$now = time();
+	$difference = $now - $time;
+	$tense = "ago";
+
+	for($j = 0; $difference >= $lengths[$j] && $j < count($lengths)-1; $j++) {
+		$difference /= $lengths[$j];
+	}
+
+	$difference = round($difference);
+
+	if($difference != 1) {
+		$periods[$j].= "s";
+	}
+
+	return "$difference $periods[$j] $tense";
+}
+
+/*
  * get_col_x()
  * params = $arr (array), $size (string)
  * return col-size-#
@@ -110,11 +156,37 @@ function ocp_video_id($url) {
 	}
 }
 
-
 /*
  * ACF FIELD HELPERS
  * dependency = advanced-custom-fields-pro
  */
+ 
+/*
+ * ocp_title()
+ * echo $title
+ */
+function ocp_title($title = null) {
+	if($title == null) {
+		$title = get_the_title();
+		if(is_home()) {
+			$blog_page = get_option('page_for_posts');
+			$title = get_the_title($blog_page);
+		}
+		if(is_archive()) {
+			$title = single_month_title('', false);
+		}
+		if(is_category()) {
+			$title = single_cat_title('', false);
+		}
+		if(is_tag()) {
+			$title = single_tag_title('', false);
+		}
+		if(is_taxonomy()) {
+			$title = single_term_title('', false);
+		}
+	} 
+	echo $title;
+}
  
 /*
  * the_conditional_field()
@@ -188,3 +260,12 @@ function the_background($name, $option = false) {
 	echo $style;
 }
 
+/*
+ * the_map()
+ * params = $name (string), $format (string)
+ * echo address || lat || lng
+ */
+function the_map($name, $format = 'address') {
+	$value = get_field($name);
+	echo $value[$format];
+}
