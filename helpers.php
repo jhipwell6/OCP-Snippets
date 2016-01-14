@@ -26,18 +26,6 @@ function trim_excerpt($text) {
 add_filter('get_the_excerpt', 'trim_excerpt');
 
 /*
- * the_post_thumbnail_url()
- * echo url
- */
-function the_post_thumbnail_url() {
-	global $post;
-	$image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
-	$url = $image[0];
-	
-	echo $url;
-}
-
-/*
  * time_ago()
  * return time
  */
