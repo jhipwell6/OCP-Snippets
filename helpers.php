@@ -1,108 +1,55 @@
 <?php
+
+/***************************************************************************************************************
+*********************************************** HELPER FUNCTIONS ***********************************************
+***************************************************************************************************************/
 /*
- * link_target()
- * params = $url (string)
- * return '' || target="_blank"
+ * _in_array()
+ * alias for php in_array()
+ * params = $needle (string), $haystack (array)
+ * return true || false (bool)
  */
-function link_target($url) {
-	$extension = pathinfo($url, PATHINFO_EXTENSION);
-	$is_doc = array('doc','docx','pdf','ppt','pptx','xls','xlsx','zip');
-	$host = home_url();
-	if(in_array($extension, $is_doc) || strpos($url, $host) === false) {
-		$target = ' target="_blank"';
+function _in_array( $needle, $haystack ) {
+	if(empty($haystack))
+		return false;
+	
+	foreach(array_values($haystack) as $v)
+		$new_haystack[$v] = 1;
+		
+	if (isset($new_haystack[$needle])) {
+		return true;
 	} else {
-		$target = '';
+		return false;
 	}
-	return $target;
 }
 
+/*
+ * _print_r()
+ * similar to php print_r()
+ * params = $arr (array)
+ * prints array
+ */
+function _print_r( $arr ) {
+	echo '<pre>';
+	print_r($arr);
+	echo '</pre>';
+}
+ 
 /*
  * trim_excerpt()
  * return ''
  */
-function trim_excerpt($text) {
+function trim_excerpt( $text ) {
 	return rtrim($text,'[&hellip;]');
 }
 add_filter('get_the_excerpt', 'trim_excerpt');
 
 /*
- * time_ago()
- * return time
- */
-function time_ago($time) {
-	$periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
-	$lengths = array("60","60","24","7","4.35","12","10");
-
-	$now = time();
-	$difference = $now - $time;
-	$tense = "ago";
-
-	for($j = 0; $difference >= $lengths[$j] && $j < count($lengths)-1; $j++) {
-		$difference /= $lengths[$j];
-	}
-
-	$difference = round($difference);
-
-	if($difference != 1) {
-		$periods[$j].= "s";
-	}
-
-	return "$difference $periods[$j] $tense";
-}
-
-/*
- * get_col_x()
- * params = $arr (array), $size (string)
- * return col-size-#
- */
-function get_col_x($arr, $size) {
-	$sz = $size == '' ? 'sm' : $size;
-	$col = '';
-	$count = count($arr);
-	switch($count) {
-		case 1:
-			$col = 'col-'.$sz.'-12';
-			break;
-		case 2:
-			$col = 'col-'.$sz.'-6';
-			break;
-		case 3:
-			$col = 'col-'.$sz.'-4';
-			break;
-		case 4:
-			$col = 'col-'.$sz.'-3';
-			break;
-		case 5:
-			$col = 'col-'.$sz.'-3';
-			break;
-		case 6:
-			$col = 'col-'.$sz.'-4';
-			break;
-		case 7:
-		case 8:
-			$col = 'col-'.$sz.'-2';
-			break;
-		case 9:
-			$col = 'col-'.$sz.'-4';
-			break;
-		case 10:
-		case 11:
-		case 12:
-			$col = 'col-'.$sz.'-2';
-			break;
-		default:
-			$col = 'col-'.$sz.'-2';
-			break;
-	}
-	return $col;
-}
-
-/*
- * ocp_url_type()
+ * _get_url_type()
  * params = $url (string)
  * return 'youtube' || 'vimeo' || 'file'
  */
-function ocp_url_type($url) {
+function _get_url_type( $url ) {
     if (strpos($url, 'youtube') > 0 || strpos($url, 'youtu') > 0) {
         return 'youtube';
     } elseif (strpos($url, 'vimeo') > 0) {
@@ -113,12 +60,12 @@ function ocp_url_type($url) {
 }
 
 /*
- * ocp_video_id()
+ * _get_video_id()
  * params = $url (string)
  * return id
  */
-function ocp_video_id($url) {
-	$type = ocp_url_type($url);
+function _get_video_id( $url ) {
+	$type = _get_url_type($url);
 	if($type == 'file') {
 		return false;
 	} elseif($type == 'youtube') {
@@ -144,73 +91,138 @@ function ocp_video_id($url) {
 	}
 }
 
+
+
+/***************************************************************************************************************
+********************************************** TEMPLATE FUNCTIONS **********************************************
+***************************************************************************************************************/
+
 /*
- * ACF FIELD HELPERS
- * dependency = advanced-custom-fields-pro
+ * _get_link_target()
+ * params = $url (string)
+ * return '' || target="_blank"
  */
- 
-/*
- * ocp_title()
- * echo $title
- */
-function ocp_title($title = null) {
-	if($title == null) {
-		$title = get_the_title();
-		if(is_home()) {
-			$blog_page = get_option('page_for_posts');
-			$title = get_the_title($blog_page);
-		}
-		if(is_archive()) {
-			$title = single_month_title('', false);
-		}
-		if(is_category()) {
-			$title = single_cat_title('', false);
-		}
-		if(is_tag()) {
-			$title = single_tag_title('', false);
-		}
-		if(is_taxonomy()) {
-			$title = single_term_title('', false);
-		}
-	} 
-	echo $title;
-}
- 
-/*
- * the_conditional_field()
- * params = $name (string), $before (string), $after (string), $sub (bool)
- * echo $before . $value . $after
- */
-function the_conditional_field($name, $before, $after, $sub = false) {
-	$value = $sub !== false ? get_sub_field($name) : get_field($name);
-	if($value)
-		echo $before . $value . $after;
+function _get_link_target( $url ) {
+	$extension = pathinfo($url, PATHINFO_EXTENSION);
+	$is_doc = array('doc','docx','pdf','ppt','pptx','xls','xlsx','zip');
+	$host = home_url();
+	if(_in_array($extension, $is_doc) || strpos($url, $host) === false) {
+		$target = ' target="_blank"';
+	} else {
+		$target = '';
+	}
+	return $target;
 }
 
 /*
- * the_image()
- * params = $name (string), $format (string), $sub (bool)
- * echo $value[$format]
+ * _the_link_target()
+ * params = $url (string)
+ * see get_link_target()
+ * echo '' || target="_blank"
  */
-function the_image($name = '', $format = 'url', $sub = false) {
-	$value = $sub !== false ? get_sub_field($name) : get_field($name);
+function _the_link_target( $url ) {
+	echo _get_link_target($url);
+}
+
+/*
+ * _time_ago()
+ * return time
+ */
+function _time_ago( $time ) {
+	$periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
+	$lengths = array("60","60","24","7","4.35","12","10");
+
+	$now = time();
+	$difference = $now - $time;
+	$tense = "ago";
+
+	for($j = 0; $difference >= $lengths[$j] && $j < count($lengths)-1; $j++) {
+		$difference /= $lengths[$j];
+	}
+
+	$difference = round($difference);
+
+	if($difference != 1) {
+		$periods[$j].= "s";
+	}
+
+	return "$difference $periods[$j] $tense";
+}
+
+ 
+/*
+ * _get_conditional_field()
+ * params = $name (string), $before (string), $after (string), $sub (bool), $op (bool)
+ * dependency = advanced-custom-fields-pro
+ * return $before . $value . $after
+ */
+function _get_conditional_field( $name, $before, $after, $sub = false, $opt = false ) {
+	if($sub) {
+		$value = $opt !== false ? get_sub_field($name, 'option') : get_sub_field($name);
+	} else {
+		$value = $opt !== false ? get_field($name, 'option') : get_field($name);
+	}
+	$before = sprintf( $before, $value );
+	$after = sprintf( $after, $value );
+	if($value)
+		return $before . $value . $after;
+}
+
+/*
+ * _the_conditional_field()
+ * params = $name (string), $before (string), $after (string), $sub (bool), $op (bool)
+ * dependency = advanced-custom-fields-pro
+ * echo $before . $value . $after
+ */
+function _the_conditional_field( $name, $before, $after, $sub = false, $opt = false ) {
+	echo _get_conditional_field( $name, $before, $after, $sub, $opt );
+}
+
+/*
+ * _get_image()
+ * params = $name (string), $format (string), $sub (bool), $opt (bool)
+ * dependency = advanced-custom-fields-pro
+ * return $value[$format]
+ */
+function _get_image( $name = '', $format = 'url', $sub = false, $opt = false ) {
+	if($sub) {
+		$value = $opt !== false ? get_sub_field($name, 'option') : get_sub_field($name);
+	} else {
+		$value = $opt !== false ? get_field($name, 'option') : get_field($name);
+	}
 	if($value) {
-		echo $value[$format];
+		return $value[$format];
 	}
 }
 
 /*
- * the_video()
- * params = $name (string), $format (string), $sub (bool)
- * echo embed || image || url || id
+ * _the_image()
+ * params = $name (string), $format (string), $sub (bool), $opt (bool)
+ * dependency = advanced-custom-fields-pro
+ * see _get_image()
+ * echo $value[$format]
  */
-function the_video($name = '', $format = 'id', $sub = false) {
-	$url = $sub !== false ? get_sub_field($name) : get_field($name);
-	$type = ocp_url_type($url);
-	$id = ocp_video_id($url);
+function _the_image( $name = '', $format = 'url', $sub = false, $opt = false ) {
+	echo _get_image( $name, $format, $sub, $opt );
+}
+
+/*
+ * _get_video()
+ * params = $name (string), $format (string), $sub (bool), $opt (bool)
+ * dependency = advanced-custom-fields-pro
+ * return embed || image || url || id
+ */
+function _get_video( $name = '', $format = 'id', $sub = false, $opt = false ) {
+	if($sub) {
+		$url = $opt !== false ? get_sub_field($name, 'option') : get_sub_field($name);
+	} else {
+		$url = $opt !== false ? get_field($name, 'option') : get_field($name);
+	}
+	$type = _get_url_type($url);
+	$id = _get_video_id($url);
 	if($format == 'embed') {
 		$embed = $type == 'vimeo' ? 'http://player.vimeo.com/video/'.$id : 'http://www.youtube.com/embed/'.$id.'?rel=0&amp;showinfo=0';
-		echo $embed;
+		return $embed;
 	} elseif($format == 'image') {
 		switch($type) {
 			case 'youtube':
@@ -221,39 +233,20 @@ function the_video($name = '', $format = 'id', $sub = false) {
 				$image = $hash[0]['thumbnail_large'];
 				break;
 		}
-		echo $image;
+		return $image;
 	} elseif($format == 'url') {
-		echo $url;
+		return $url;
 	} else {
-		echo $id;
+		return $id;
 	}
 }
 
 /*
- * the_background()
- * params = $name (string), $option (bool)
- * echo color || image
+ * _the_video()
+ * params = $name (string), $format (string), $sub (bool), $opt (bool)
+ * dependency = advanced-custom-fields-pro
+ * echo embed || image || url || id
  */
-function the_background($name, $option = false) {
-	$repeater = $option == false ? get_field($name) : get_field($name, 'option');
-	$row = $repeater[0];
-	if($row['color'] !== '') {
-		$value = $row['color'];
-		$style = 'background:none;background-color:'.$value.';';
-	}
-	if($row['image'] !== '') {
-		$value = $row['image'];
-		$style = 'background-image:url('.$value.');';
-	}
-	echo $style;
-}
-
-/*
- * the_map()
- * params = $name (string), $format (string)
- * echo address || lat || lng
- */
-function the_map($name, $format = 'address') {
-	$value = get_field($name);
-	echo $value[$format];
+function _the_video( $name = '', $format = 'id', $sub = false, $opt = false ) {
+	echo _get_video( $name, $format, $sub, $opt );
 }
