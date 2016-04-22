@@ -250,3 +250,36 @@ function _get_video( $name = '', $format = 'id', $sub = false, $opt = false ) {
 function _the_video( $name = '', $format = 'id', $sub = false, $opt = false ) {
 	echo _get_video( $name, $format, $sub, $opt );
 }
+
+/*
+ * _get_text_area()
+ * params = $name (string), $before (string), $sep (string), $after (string), $sub (bool), $opt (bool), $glue (string)
+ * dependency = advanced-custom-fields-pro
+ * return $before . $first . $sep . $remaining . $after;
+ */
+function _get_text_area( $name = '', $before = '', $sep = '', $after = '', $sub = false, $opt = false, $glue = '<br />' ) {
+	if($sub) {
+		$value = $opt !== false ? get_sub_field($name, 'option') : get_sub_field($name);
+	} else {
+		$value = $opt !== false ? get_field($name, 'option') : get_field($name);
+	}
+	
+	$value = explode($glue, $value);
+	
+	$first = $value[0];
+	unset($value[0]);
+	
+	$remaining = implode($glue, $value);
+	
+	return $before . $first . $sep . $remaining . $after;
+}
+
+/*
+ * _the_text_area()
+ * params = $name (string), $before (string), $sep (string), $after (string), $sub (bool), $opt (bool), $glue (string)
+ * dependency = advanced-custom-fields-pro
+ * echo $before . $first . $sep . $remaining . $after;
+ */
+function _the_text_area( $name = '', $before = '', $sep = '', $after = '', $sub = false, $opt = false, $glue = '<br />' ) {
+	echo _get_text_area( $name, $before, $sep, $after );
+}
