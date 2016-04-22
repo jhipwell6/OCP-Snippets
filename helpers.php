@@ -281,5 +281,5 @@ function _get_text_area( $name = '', $before = '', $sep = '', $after = '', $sub 
  * echo $before . $first . $sep . $remaining . $after;
  */
 function _the_text_area( $name = '', $before = '', $sep = '', $after = '', $sub = false, $opt = false, $glue = '<br />' ) {
-	echo _get_text_area( $name, $before, $sep, $after );
+	echo _get_text_area( $name, $before, $sep, $after, $sub, $opt, $glue );
 }
