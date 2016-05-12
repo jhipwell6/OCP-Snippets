@@ -1,0 +1,62 @@
+{
+	"php": {
+		"extends": "html",
+		"abbreviations": {
+			"ti": "ti:url",
+			"tsi": "tsi:url",
+		},
+		"snippets": {
+			"action": "add_action('${id}', '${class}');",
+			
+			"gf": "get_field('${class}');",
+			"gsf": "get_sub_field('${class}');",
+			"gf:o": "get_field('${class}', 'option');",
+			"gsf:o": "get_sub_field('${class}', 'option');",
+			"tf": "<?php the_field('${class}'); ?>",
+			"tsf": "<?php the_sub_field('${class}'); ?>",
+			"tf:o": "<?php the_field('${class}', 'option'); ?>",
+			"tsf:o": "<?php the_sub_field('${class}', 'option'); ?>",
+			"ti:url": "<?php _the_image('${class}', 'url', false); ?>",
+			"tsi:url": "<?php _the_image('${class}', 'url', true); ?>",
+			"ti:alt": "<?php _the_image('${class}', 'alt', false); ?>",
+			"tsi:alt": "<?php _the_image('${class}', 'alt', true); ?>",
+			"gta": "_get_text_area('${class}', '$0', '$1', '$2');",
+			"tta": "<?php _the_text_area('${class}', '$0', '$1', '$2'); ?>",
+			
+			"ew": "<?php endwhile; ?>",
+			"ew:i": "<?php \\$i++; endwhile; ?>",
+			"ef": "<?php endif; ?>",
+			"efe": "<?php endforeach; ?>",
+			
+			
+			
+			"filter:content": "add_filter('the_content', '${class}', 20);",
+			"filter:value": "add_filter('acf/load_value/key=${id}', '${class}', 10, 3);",
+			
+			"fnc": "function ${class}() {\n\t|\n}",
+			
+			"hposts": "have_posts()",
+			"hrows": "have_rows('|')",
+			"if": "if(${1})",
+			"if:hp": "if(have_posts())",
+			"if:hr": "if(have_rows('|'))",
+			"php": "<?php | ?>",
+			"wh": "while(${1})",
+			"wh:hp": "while(have_posts()) : the_post();",
+			"wh:hr": "while(have_rows('|')) : the_row();",
+			
+			"wp:title" : "<?php the_title(); ?>",
+			"wp:link" : "<?php the_permalink(); ?>",
+			"wp:image" : "<?php the_post_thumbnail('full', array('class' => 'img-responsive')); ?>",
+			"wp:content" : "<?php the_content(); ?>",
+			"wp:time" : "<?php the_time('|'); ?>",
+			"wp:su": "<?php echo site_url('/${class}/'); ?>",
+			"wp:terms" : "get_terms('|');",
+			"wp:query" : "new WP_Query(array('post_type' => '${1:post}', 'posts_per_page' => ${2:-1}, 'orderby' => '${3:menu_order}', 'order' => '${4:asc}'));",
+			
+			"wp:gtdu": "get_template_directory_uri()",
+			"wp:gtp": "<?php get_template_part('parts/${id}', '${class}'); ?>",
+			"wp:template": "<?php\n/*\n* Template Name: ${class}\n*/\nget_header();\nif(have_posts()) the_post();\n?>\n\n\t|\n\n<?php get_footer(); ?>"
+		}
+	}
+}
